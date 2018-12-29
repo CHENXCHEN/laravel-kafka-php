@@ -1,0 +1,31 @@
+{
+  "name": "CHENXCHEN/laravel-kafka-php",
+  "description": "kafka-php for laravel",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "报时",
+      "email": "baoshi@fordeal.com"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "CHENXCHEN\\LaravelQueueKafka\\" : "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "CHENXCHEN\\LaravelQueueKafka\\Tests\\": "tests"
+    }
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "CHENXCHEN\\LaravelQueueKafka\\LaravelQueueKafkaServiceProvider"
+      ]
+    }
+  },
+  "require": {
+      "chenxchen/kafka-php": "*"
+  }
+}
