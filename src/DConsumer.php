@@ -86,6 +86,9 @@ class DConsumer
         if (isset($options['timeout']) && $options['timeout'] + 3 > $this->getConfigs()['sessionTimeout'] / 1000) {
             throw new QueueKafkaException("--timeout {$options['timeout']} can not greater than consumer sessionTimeout " . $this->getConfigs()['sessionTimeout'] / 1000 . " - 3");
         }
+        if (!isset($options['timeout'])) {
+            $options['timeout'] = max(intval($this->getConfigs()['sessionTimeout'] / 1000) - 3, 0);
+        }
         $this->options = $options;
     }
 
@@ -220,7 +223,7 @@ class DConsumer
         });
 
         $this->checkMemoryExceeded();
-        pcntl_alarm($this->getOptionTimeout() + 3);
+        pcntl_alarm($this->getOptionTimeout());
     }
 
     protected function clearTimeoutHandler() {
