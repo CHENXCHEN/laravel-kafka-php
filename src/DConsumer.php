@@ -3,6 +3,9 @@
 namespace CHENXCHEN\LaravelQueueKafka;
 
 use CHENXCHEN\LaravelQueueKafka\Exceptions\QueueKafkaException;
+use CHENXCHEN\LaravelQueueKafka\Message\Message;
+use CHENXCHEN\LaravelQueueKafka\Message\PartitionMessage;
+use CHENXCHEN\LaravelQueueKafka\Message\TopicMessage;
 use Kafka\Consumer;
 use Kafka\ConsumerConfig;
 use Monolog\Handler\StdoutHandler;
@@ -104,7 +107,7 @@ class DConsumer
             'metadataBrokerList' => '',
             'groupId' => '',
             'brokerVersion' => '2.0.0',
-            'sessionTimeout' => 30000,
+            'sessionTimeout' => 70000,
             'rebalanceTimeout' => 30000,
             'maxBytes' => 65536,
             'maxWaitTime' => 100,
@@ -185,6 +188,7 @@ class DConsumer
     public function consume()
     {
         $this->getConsumer()->start(function ($messages) {
+            $parsedMessages = $this->getMessages($messages);
             $executeHandle = $this->getExecuteHandle();
             $handle = new $executeHandle();
             $this->registerTimeoutHandler();
@@ -192,17 +196,37 @@ class DConsumer
                 try {
                     call_user_func_array(
                         [$handle, 'executes'],
-                        $messages
+                        [$parsedMessages, ]
                     );
                 } catch (\Exception $e) {
                 }
             }
             call_user_func_array(
                 [$handle, 'executes'],
-                $messages
+                [$parsedMessages, ]
             );
             $this->clearTimeoutHandler();
         });
+    }
+
+    /**
+     * @param array $messageBodies
+     * @return TopicMessage[]
+     */
+    public function getMessages($messageBodies = []) {
+        $retTopicMessages = [];
+        foreach ($messageBodies as $topicName => $messageBody) {
+            $retPartitionMessages = [];
+            foreach ($messageBody as $partition => $messages) {
+                $retMessages = [];
+                foreach ($messages as $message) {
+                    $retMessages []= new Message($message);
+                }
+                $retPartitionMessages []= new PartitionMessage($partition, $retMessages);
+            }
+            $retTopicMessages []= new TopicMessage($topicName, $retPartitionMessages);
+        }
+        return $retTopicMessages;
     }
 
     /**

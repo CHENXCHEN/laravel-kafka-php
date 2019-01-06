@@ -92,7 +92,7 @@ class KafkaQueue extends Queue implements QueueContract
     {
         try {
             $this->producer->send([$payload, ]);
-        } catch (\ErrorException $exception) {
+        } catch (\Exception $exception) {
             $this->reportConnectionError('pushRaw', $exception);
         }
         return uniqid('', true);
@@ -121,6 +121,9 @@ class KafkaQueue extends Queue implements QueueContract
         $payload = json_encode([
             'job' => get_class($job),
             'data' => $jobData,
+            'ext' => [
+                'epochSec' => time(),
+            ],
         ]);
 
         if (JSON_ERROR_NONE !== json_last_error()) {
