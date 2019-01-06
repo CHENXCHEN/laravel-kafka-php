@@ -2,7 +2,7 @@
 namespace CHENXCHEN\LaravelQueueKafka\Message;
 
 /**
- * Class Message
+ * Class MessageUnit
  * @property int $crc
  * @property int $magic
  * @property int $attr
