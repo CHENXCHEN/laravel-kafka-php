@@ -10,7 +10,7 @@
   ],
   "autoload": {
     "psr-4": {
-      "CHENXCHEN\\LaravelQueueKafka\\" : "src/"
+      "CHENXCHEN\\LaravelQueueKafka\\": "src/"
     }
   },
   "autoload-dev": {
@@ -26,6 +26,9 @@
     }
   },
   "require": {
-      "chenxchen/kafka-php": "*"
+    "chenxchen/kafka-php": "dev-baoshi",
+    "illuminate/database": "5.3.*|5.4.*|5.5.*|5.6.*|5.7.*",
+    "illuminate/support": "5.3.*|5.4.*|5.5.*|5.6.*|5.7.*",
+    "illuminate/queue": "5.3.*|5.4.*|5.5.*|5.6.*|5.7.*"
   }
 }
