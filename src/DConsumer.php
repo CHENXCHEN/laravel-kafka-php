@@ -192,19 +192,22 @@ class DConsumer
             $executeHandle = $this->getExecuteHandle();
             $handle = new $executeHandle();
             $this->registerTimeoutHandler();
-            while ($this->getOptionTries() - 1 >= 0) {
+            $doCnt = 0;
+            while ($this->getOptionTries() >= $doCnt) {
+                ++$doCnt;
                 try {
                     call_user_func_array(
                         [$handle, 'executes'],
                         [$parsedMessages, ]
                     );
+                    break;
                 } catch (\Exception $e) {
+                    // 如果重试次数超过了限制，那么抛出异常
+                    if ($this->getOptionTries() < $doCnt) {
+                        throw $e;
+                    }
                 }
             }
-            call_user_func_array(
-                [$handle, 'executes'],
-                [$parsedMessages, ]
-            );
             $this->clearTimeoutHandler();
         });
     }
